@@ -16,4 +16,6 @@ Daniel Roth is the Principal Product Manager for ASP.NET Core & Blazor on the .N
 
 ## Recording
 
-An individual session recording could not be verified as of November 12, 2026. Check the official [.NET YouTube channel](https://www.youtube.com/dotnet) for recordings.
+[![Watch Modern web development with ASP.NET Core & Blazor in .NET 11](https://i.ytimg.com/vi/19L2hdUs3_s/hqdefault.jpg)](https://www.youtube.com/watch?v=19L2hdUs3_s)
+
+[Watch the session on YouTube](https://www.youtube.com/watch?v=19L2hdUs3_s).
