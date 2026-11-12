@@ -4,4 +4,4 @@
 
 [Download the slides](beyond-localhost-dotnet-agents-in-foundry-v08.pdf).
 
-[Demo repository](https://github.com/elbruno/26-11-DotNetConf-Beyond-Localhost-DotNet-Agents-in-Foundry)
+[Demo repository](https://github.com/elbruno/26-11-DotNetConf-Beyond-Localhost-DotNet-Agents-in-Foundry-public)
