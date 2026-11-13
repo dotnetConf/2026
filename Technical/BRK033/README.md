@@ -4,9 +4,9 @@ Connect AI to the features of an existing .NET MAUI app with Microsoft.Extension
 
 [Session details](https://dotnet.microsoft.com/en-us/conf/2026/agenda/brk033)
 
-[Watch the session](https://youtu.be/FYGBT08-N48)
+[Watch the session](https://www.youtube.com/watch?v=FYGBT08-N48)
 
-Slides: [PDF](dotnetconf26-maui-ai-in-product.pdf) | [PowerPoint](dotnetconf26-maui-ai-in-product.pptx)
+Slides: [PDF](dotnetconf26-brk033-less-chat-more-action.pdf) | [PowerPoint](dotnetconf26-brk033-less-chat-more-action.pptx)
 
 ## Links
 

@@ -4,6 +4,8 @@ A tour of what's new in .NET MAUI for .NET 11: the move to CoreCLR, XAML source 
 
 [Session details](https://dotnet.microsoft.com/en-us/conf/2026/agenda/brk006)
 
+Recording: [YouTube](https://www.youtube.com/watch?v=fh0c-EBCifU)
+
 Slides: [PDF](dotnetconf26-maui-whatsnew.pdf) | [PowerPoint](dotnetconf26-maui-whatsnew.pptx)
 
 ## Links
