@@ -22,8 +22,7 @@ The prompt template used in the workflow is by Saad Awais, on BlazorHelpWebsite.
 
 ## Slides
 
-- [What-Not-To-AI-Animated.pptx](What-Not-To-AI-Animated.pptx) (PowerPoint, in this folder)
-- [Same deck on Dropbox](https://www.dropbox.com/scl/fi/tzdb65xr14ptnunmsj7ae/What-Not-To-AI-Animated.pptx?rlkey=eutwot3jrvp2ql6r2brxb2grt&dl=0)
+- [What-Not-To-AI-Animated.pptx](https://adefwebserver.com/download/What-Not-To-AI-Animated.pptx) (PowerPoint)
 
 ## Code
 
