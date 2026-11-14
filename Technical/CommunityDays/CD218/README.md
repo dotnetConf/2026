@@ -4,6 +4,6 @@
 
 Do you want to get the demo code? Check out [the repo](https://github.com/Lombiq/All-in-one-E2E-testing-of-ASP.NET-Core-web-apps-demo)!
 
-Want to see the slides? Download [the PPTX](All in one E2E testing of ASP.NET Core web apps.pptx)!
+Want to see the slides? Download [the PPTX](<All in one E2E testing of ASP.NET Core web apps.pptx>)!
 
 Interested in learning more about the tools used in this demo? Check out the [Lombiq UI Testing Toolbox for Orchard Core](https://github.com/Lombiq/UI-Testing-Toolbox)!
