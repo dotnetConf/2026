@@ -18,7 +18,7 @@ This session walks through a spec-first workflow. Prompt templates make the agen
 6. What to AI: coding, testing, security checks, fixes, the user guide and deployment
 7. Audit and test everything: a real AI security review and its fixes
 
-The prompt template used in the workflow is by Saad Awais, on BlazorHelpWebsite.com.
+The prompt template used in the workflow is by Saad Awais, on [BlazorHelpWebsite.com](https://blazorhelpwebsite.com/ViewBlogPost/20094).
 
 ## Slides
 
