@@ -13,7 +13,7 @@ Home of all the content from the .NET Conf 2026 Community Days
 * [CD110](CD110) - Silent Superpowers: Why Breaking Production Isn’t Scary Anymore - André Silva
 * [CD111](CD111) - The Most Overengineered Pocketwatch Ever Made - Ed Charbeneau
 * [CD112](CD112) - Developer Workflows in AI Age - Local or Cloud - Sam Basu
-* [CD113](CD113) - Clean Architecture AND MORE with ASP.NET Core - Steve Smith
+* [CD113](CD113) - Clean Architecture AND MORE with ASP.NET Core - Steve "Ardalis" Smith
 * [CD114](CD114) - How Do AI Systems Like ChatGPT Work? A Clear Explanation for Everyone! - Otto Dobretsberger
 * [CD115](CD115) - .NET AI Architecture and DevOps - Jeffrey Palermo
 * [CD116](CD116) - Godot + C#15 and You! - Michael Hawker
