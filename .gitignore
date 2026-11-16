@@ -6,4 +6,4 @@
 .vs/
 
 *.user
-*.suo
+.vscode/
