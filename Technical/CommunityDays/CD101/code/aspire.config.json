@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "src/SourcingObservabilityLab.AppHost/SourcingObservabilityLab.AppHost.csproj"
+  }
+}
