@@ -28,7 +28,7 @@ Home of all the content from the .NET Conf 2026 Community Days
 * [CD205](CD205) - Building Dual-Screen Experiences with Avalonia - Javier Suárez
 * [CD206](CD206) - Shipping a VS Code extension backed by a .NET Tool based analyzer - Erik Ejlskov Jensen
 * [CD207](CD207) - When Unit tests are not enough: Property-based testing and Snapshot tests - Davide Bellone
-* [CD208](CD208) - ASP.NET Core 11 __ OpenTelemetry - Martin Costello
+* [CD208](CD208) - ASP.NET Core 11 :heart: OpenTelemetry - Martin Costello
 * [CD209](CD209) - Why not both? Bringing Modern Web Development to .NET - David Whitney
 * [CD210](CD210) - SE.Redis in .NET 11 - Marc Gravell
 * [CD211](CD211) - Beyond Prototypes: Building Production Ready AI Workflows - Cecil Phillip
