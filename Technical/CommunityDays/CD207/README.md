@@ -2,7 +2,7 @@
 
 In this session, Davide explores two different types of tests that many people never heard of: Property-based tests and Snapshot tests.
 
-🔗 [Additional Resources](https://www.code4it.dev/talks/additional-resources/snapshot-tests-and-property-based-tests/​)
+🔗 [Additional Resources](https://www.code4it.dev/talks/additional-resources/snapshot-tests-and-property-based-tests/)
 
 ## About Davide Bellone
 
