@@ -1,8 +1,16 @@
 # .NET Conf 2026
-Branding, content and demos for the .NET Conf 2026 event, hosted by [Microsoft](https://dotnet.microsoft.com/en-us/) and our [Community Partners](https://dotnetconf.net)
 
-## Repository layout
+Welcome! This repository collects content and resources from [.NET Conf 2026](https://dotnetconf.net), hosted by [Microsoft](https://dotnet.microsoft.com/) and our community partners.
 
-- `Creative/` contains event branding and presentation templates. The creative assets are designed to help promote the event across various platforms and media formats.
-- `Technical/` contains session materials, including slides and demo content. See [`Technical/README.md`](Technical/README.md) for the session listing.
-- `swag/` contains device wallpaper assets.
+## Find session content
+
+Browse the [session catalog](Technical/README.md) to find materials by day and session. Each session folder may include slides, demos, and other resources.
+
+- [Day 1 sessions](Technical/README.md#day-1)
+- [Day 2 sessions](Technical/README.md#day-2)
+- [Community Days sessions](Technical/README.md#community-days)
+
+## More resources
+
+- [`Creative/`](Creative/) — event branding and presentation templates.
+- [`swag/`](swag/) — wallpapers for desktop, phone, ultra-wide, and watch.
