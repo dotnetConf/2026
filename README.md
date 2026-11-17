@@ -8,7 +8,7 @@ Browse the [session catalog](Technical/README.md) to find materials by day and s
 
 - [Day 1 sessions](Technical/README.md#day-1)
 - [Day 2 sessions](Technical/README.md#day-2)
-- [Community Days sessions](Technical/README.md#community-days)
+- [Community Days sessions](https://github.com/dotnetConf/2026/tree/main/Technical/CommunityDays)
 
 ## More resources
 
