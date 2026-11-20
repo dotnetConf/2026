@@ -1,6 +1,6 @@
 # Test Smarter: AI-Assisted Testing for Modern .NET
 
-Speakers: McKenna Barlow, Amaury Levé
+Speaker: McKenna Barlow
 
 [Session details](https://dotnet.microsoft.com/en-us/conf/2026/agenda/brk038)
 

@@ -44,7 +44,7 @@ Home of all the content from .NET Conf 2026
 * [BRK032](BRK032) - EF Core 11: Vector Search, Smarter LINQ, and a Friendlier dotnet ef - Jiri Cincura
 * [BRK031](BRK031) - Beyond Localhost: .NET Agents in Foundry - Bruno Capuano
 * [BRK033](BRK033) - Less Chat, More Action: AI-Powered .NET MAUI Apps - Gerald Versluis
-* [BRK038](BRK038) - Test Smarter: AI-Assisted Testing for Modern .NET - McKenna Barlow, Amaury Levé
+* [BRK038](BRK038) - Test Smarter: AI-Assisted Testing for Modern .NET - McKenna Barlow
 * [BRK035](BRK035) - Protect your PC from AI coding agents while modernising legacy .NET apps - Justin Yoo
 * [BRK040](BRK040) - Give Your .NET Agent a Face: Building an AI Desk Companion with M5Stack - Bruno Capuano
 
