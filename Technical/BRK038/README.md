@@ -2,7 +2,7 @@
 
 **Session:** BRK038 | **Speaker:** [McKenna Barlow](https://dotnet.microsoft.com/en-us/conf/2026/speakers/mckenna-barlow)
 
-[Session details](https://dotnet.microsoft.com/en-us/conf/2026/agenda/brk038) | [Download the slides](test-smarter-ai-powered-testing-for-dotnet.pptx)
+[Session details](https://dotnet.microsoft.com/en-us/conf/2026/agenda/brk038) | [Watch the session](https://www.youtube.com/watch?v=fKnZotxlEec&list=PLJL9Ln_f6sGM&index=39&t=1s) | [Download the slides](test-smarter-ai-powered-testing-for-dotnet.pptx)
 
 ## Abstract
 
