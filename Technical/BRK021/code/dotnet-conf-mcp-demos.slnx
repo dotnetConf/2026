@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/FireworksChatClient/FireworksChatClient.csproj" />
+    <Project Path="samples/FireworksServer/FireworksServer.csproj" />
+    <Project Path="samples/ReleasePlannerServer/ReleasePlannerServer.csproj" />
+    <File Path="samples/dotnet-conf-mcp-demos.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".mcp.json" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>

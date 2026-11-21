@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "Fireworks Show Control": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "samples\\FireworksServer\\bin\\Debug\\net11.0\\FireworksServer.dll",
+        "--McpTransport=stdio",
+        "--ListenUrl=http://127.0.0.1:5399",
+        "--DashboardUrl=http://localhost:5399"
+      ]
+    },
+    "Stateless Release Planner": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "samples\\ReleasePlannerServer\\bin\\Debug\\net11.0\\ReleasePlannerServer.dll"
+      ]
+    }
+  }
+}

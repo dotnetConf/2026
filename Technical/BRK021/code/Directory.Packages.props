@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <McpVersion>2.4.0</McpVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
+    <PackageVersion Include="ModelContextProtocol" Version="$(McpVersion)" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="$(McpVersion)" />
+    <PackageVersion Include="ModelContextProtocol.Extensions.Apps" Version="$(McpVersion)" />
+    <PackageVersion Include="OpenAI" Version="2.15.0" />
+  </ItemGroup>
+</Project>
