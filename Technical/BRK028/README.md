@@ -9,3 +9,4 @@
 - [Azure sandboxes documentation](https://sandboxes.azure.com/docs/sandboxes/)
 - [Nick Greenfield's DTS + Hosted Skills expense demo](https://www.youtube.com/watch?v=0rgMiflJoVU)
 - [Deterministic workflow with Azure Functions Hosted Skills](https://devblogs.microsoft.com/azure-sdk/dynamic-workflows-azure-functions-hosted-skills/)
+- [Slide deck[(./BRK028-029.pptx)
