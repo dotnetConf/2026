@@ -20,4 +20,6 @@ André Silva is a senior software engineer at General Motors. He is also a core 
 
 ## Recording
 
-TODO: Add the recording link once available.
+[![Watch recording](https://i.ytimg.com/vi/u_4fVzO7ESg/hqdefault.jpg)](https://www.youtube.com/watch?v=u_4fVzO7ESg)
+
+[Watch the session on YouTube](https://www.youtube.com/watch?v=u_4fVzO7ESg).
