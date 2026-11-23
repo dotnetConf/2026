@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fireworks Show Control</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8fafc;
+      --muted: #94a3b8;
+      --panel: rgba(10, 14, 32, .78);
+      --line: rgba(125, 249, 255, .22);
+      --accent: #7df9ff;
+      --accent2: #f0abfc;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background:
+        radial-gradient(circle at 22% 20%, rgba(76, 29, 149, .34), transparent 28%),
+        radial-gradient(circle at 82% 12%, rgba(8, 145, 178, .25), transparent 25%),
+        #030511;
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+    .chrome { position: fixed; inset: 0; pointer-events: none; padding: 20px; }
+    .topbar {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+      text-transform: uppercase; letter-spacing: .16em;
+    }
+    .eyebrow { color: var(--accent); font-size: 10px; font-weight: 800; }
+    h1 {
+      margin: 4px 0 0; max-width: 760px; font-size: clamp(25px, 4vw, 56px);
+      line-height: .94; letter-spacing: -.04em; text-transform: none;
+      text-shadow: 0 0 32px rgba(125, 249, 255, .3);
+    }
+    .status {
+      display: flex; align-items: center; gap: 8px; padding: 8px 11px;
+      border: 1px solid var(--line); border-radius: 999px; background: var(--panel);
+      color: var(--muted); font-size: 9px; white-space: nowrap;
+      backdrop-filter: blur(14px);
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 12px currentColor; }
+    .connected .dot { background: #34d399; }
+    .controls {
+      pointer-events: auto; position: absolute; left: 20px; right: 20px; bottom: 20px;
+      display: grid; grid-template-columns: 1.2fr .8fr .8fr 1.3fr auto; gap: 10px;
+      padding: 12px; border: 1px solid var(--line); border-radius: 14px;
+      background: var(--panel); box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(18px);
+    }
+    body.audience .controls { display: none; }
+    .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    label { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    input, select {
+      width: 100%; min-height: 36px; border: 1px solid rgba(148,163,184,.2);
+      border-radius: 8px; outline: none; padding: 7px 9px; background: rgba(2,6,23,.72);
+      color: var(--ink); font: inherit;
+    }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(125,249,255,.09); }
+    input[type="range"] { padding: 0; accent-color: var(--accent); }
+    button {
+      align-self: end; min-height: 36px; border: 0; border-radius: 8px; padding: 0 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #050816;
+      font-weight: 900; letter-spacing: .08em; cursor: pointer; text-transform: uppercase;
+    }
+    button:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    button:disabled { filter: grayscale(1); cursor: wait; transform: none; }
+    .telemetry {
+      position: absolute; left: 20px; bottom: 20px; display: none; gap: 8px;
+      color: var(--muted); font: 10px ui-monospace, "Cascadia Code", monospace;
+    }
+    body.audience .telemetry { display: flex; }
+    .chip { padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); backdrop-filter: blur(12px); }
+    .finale {
+      position: absolute; left: 50%; top: 51%; transform: translate(-50%, -50%) scale(.88);
+      width: min(90vw, 1100px); text-align: center; opacity: 0;
+      font-size: clamp(34px, 8vw, 108px); font-weight: 950; line-height: .9;
+      letter-spacing: -.055em; text-wrap: balance; text-transform: uppercase;
+      background: linear-gradient(90deg, #fff, var(--accent), var(--accent2), #fff);
+      background-size: 200% 100%; color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 24px rgba(125,249,255,.7));
+      transition: opacity .45s, transform .45s;
+    }
+    .finale.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); animation: shimmer 2s linear infinite; }
+    body[data-theme="Aurora"] .finale { letter-spacing: -.035em; filter: drop-shadow(0 0 34px var(--accent)); }
+    body[data-theme="Cyberpunk"] .finale {
+      font-family: ui-monospace, "Cascadia Code", monospace; letter-spacing: -.08em;
+      transform: translate(-50%, -50%) skew(-4deg) scale(.88);
+      filter: drop-shadow(5px 0 0 rgba(255,43,214,.45)) drop-shadow(-5px 0 0 rgba(0,245,255,.4));
+    }
+    body[data-theme="Cyberpunk"] .finale.visible { transform: translate(-50%, -50%) skew(-4deg) scale(1); }
+    body[data-theme="Ocean"] .finale { letter-spacing: .015em; filter: drop-shadow(0 8px 22px rgba(14,165,233,.72)); }
+    body[data-theme="Sunset"] .finale { font-family: Georgia, serif; letter-spacing: -.035em; filter: drop-shadow(0 8px 18px rgba(249,115,22,.68)); }
+    body[data-theme="Celebration"] .finale { letter-spacing: -.025em; filter: drop-shadow(0 0 26px rgba(255,209,102,.72)); }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @media (max-width: 820px) {
+      .chrome { padding: 12px; }
+      .controls { left: 12px; right: 12px; bottom: 12px; grid-template-columns: 1fr 1fr; max-height: 42vh; overflow: auto; }
+      .field:first-child, .field:nth-child(4), button { grid-column: span 2; }
+      .status { padding: 6px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <div class="chrome">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">MCP / SIGNALR / LIVE</div>
+        <h1 id="showTitle">Awaiting the next show</h1>
+      </div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">INITIALIZING</span></div>
+    </div>
+    <div class="finale" id="finale"></div>
+    <div class="controls">
+      <div class="field">
+        <label for="title">Show title</label>
+        <input id="title" value="Visual Studio After Dark" maxlength="60">
+      </div>
+      <div class="field">
+        <label for="theme">Theme</label>
+        <select id="theme">
+          <option>Aurora</option><option>Cyberpunk</option><option>Ocean</option>
+          <option>Sunset</option><option>Celebration</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="intensity">Intensity <span id="intensityValue">4</span>/5</label>
+        <input id="intensity" type="range" min="1" max="5" value="4">
+      </div>
+      <div class="field">
+        <label for="message">Finale message</label>
+        <input id="message" value="BUILD SOMETHING BRILLIANT" maxlength="60">
+      </div>
+      <button id="launch">Launch show</button>
+    </div>
+    <div class="telemetry">
+      <div class="chip" id="audienceTheme">NO SHOW</div>
+      <div class="chip" id="audienceCues">0 CUES</div>
+      <div class="chip">SIGNALR SYNC</div>
+    </div>
+  </div>
+
+  <script>
+    const embedded = window.parent !== window;
+    document.body.classList.add(embedded ? 'mcp-app' : 'audience');
+
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d');
+    const finale = document.getElementById('finale');
+    const status = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    const THEME_PROFILES = {
+      Aurora: {
+        backdrop: 'aurora', launchStyle: 'drift', particleStyle: 'curtain', finaleStyle: 'bloom',
+        gravity: .018, drag: .991, drift: .055,
+        accentColors: ['#7df9ff', '#34d399', '#8b5cf6', '#f0abfc']
+      },
+      Cyberpunk: {
+        backdrop: 'cyber-city', launchStyle: 'rail', particleStyle: 'neon', finaleStyle: 'glitch',
+        gravity: .028, drag: .976, drift: 0,
+        accentColors: ['#ff2bd6', '#00f5ff', '#faff00', '#7c3aed']
+      },
+      Ocean: {
+        backdrop: 'ocean', launchStyle: 'bubble', particleStyle: 'ripple', finaleStyle: 'tide',
+        gravity: .012, drag: .988, drift: .025,
+        accentColors: ['#38bdf8', '#0ea5e9', '#2dd4bf', '#e0f2fe']
+      },
+      Sunset: {
+        backdrop: 'sunset', launchStyle: 'comet', particleStyle: 'ember', finaleStyle: 'horizon',
+        gravity: .042, drag: .982, drift: .012,
+        accentColors: ['#fb7185', '#f97316', '#fbbf24', '#c084fc']
+      },
+      Celebration: {
+        backdrop: 'festival', launchStyle: 'salvo', particleStyle: 'confetti', finaleStyle: 'banner',
+        gravity: .038, drag: .972, drift: .018,
+        accentColors: ['#ff3366', '#ffd166', '#06d6a0', '#4cc9f0', '#f8fafc']
+      }
+    };
+
+    let width = 0, height = 0, dpr = 1;
+    let stars = [], scenery = [], rockets = [], particles = [], timers = [];
+    let lastShow = null;
+    let currentTheme = 'Aurora';
+    let currentProfile = THEME_PROFILES.Aurora;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      rebuildScenery();
+    }
+
+    function rebuildScenery() {
+      const random = mulberry32(20260728 ^ hashText(currentTheme) ^ Math.round(width));
+      stars = Array.from({ length: Math.floor(width / 7) }, () => ({
+        x: random() * width, y: random() * height * .68, r: random() * 1.2 + .2, a: random() * .65 + .2
+      }));
+      scenery = Array.from({ length: 36 }, (_, index) => ({
+        x: random() * width, y: random() * height, size: 2 + random() * 7,
+        speed: .3 + random() * .8, phase: random() * Math.PI * 2, index
+      }));
+    }
+
+    function mulberry32(seed) {
+      return function() {
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    function hashText(value) {
+      let hash = 2166136261;
+      for (let i = 0; i < value.length; i++) {
+        hash ^= value.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return hash;
+    }
+
+    function applyTheme(show) {
+      const knownTheme = Object.prototype.hasOwnProperty.call(THEME_PROFILES, show.theme);
+      currentTheme = knownTheme ? show.theme : 'Aurora';
+      currentProfile = Object.assign({}, THEME_PROFILES[currentTheme], show.profile || {});
+      const colors = currentProfile.accentColors || THEME_PROFILES[currentTheme].accentColors;
+      document.body.dataset.theme = currentTheme;
+      document.documentElement.style.setProperty('--accent', colors[0]);
+      document.documentElement.style.setProperty('--accent2', colors[Math.min(1, colors.length - 1)]);
+      document.documentElement.style.setProperty('--line', colors[0] + '38');
+      rebuildScenery();
+    }
+
+    class Rocket {
+      constructor(cue, intensity, profile) {
+        this.cue = cue;
+        this.intensity = intensity;
+        this.profile = profile;
+        this.random = mulberry32((cue.seed || 1) ^ 0x45d9f3b);
+        this.x1 = width * cue.x;
+        this.y1 = height * cue.y;
+        const starts = {
+          drift: () => [this.x1 + (this.random() - .5) * width * .12, height + 10],
+          rail: () => [width * (.12 + ((cue.seed || 0) % 5) * .19), height + 10],
+          bubble: () => [this.x1 + (this.random() - .5) * width * .08, height * .9],
+          comet: () => [cue.x < .5 ? -20 : width + 20, height * (.78 + this.random() * .12)],
+          salvo: () => [width * (.08 + this.random() * .84), height + 10]
+        };
+        [this.x0, this.y0] = (starts[profile.launchStyle] || starts.salvo)();
+        this.started = performance.now();
+        this.duration = profile.launchStyle === 'drift' ? 900 + this.random() * 260 :
+          profile.launchStyle === 'comet' ? 680 + this.random() * 180 : 500 + this.random() * 220;
+        this.done = false;
+      }
+      draw(now) {
+        const p = Math.min(1, (now - this.started) / this.duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        let x = this.x0 + (this.x1 - this.x0) * eased;
+        let y = this.y0 + (this.y1 - this.y0) * eased;
+        if (this.profile.launchStyle === 'drift') x += Math.sin(p * Math.PI * 3) * 18 * (1 - p);
+        if (this.profile.launchStyle === 'bubble') x += Math.sin(p * Math.PI * 5) * 9;
+        ctx.beginPath();
+        ctx.moveTo(
+          this.x0 + (this.x1 - this.x0) * Math.max(0, eased - .045),
+          this.y0 + (this.y1 - this.y0) * Math.max(0, eased - .045));
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = this.cue.primaryColor;
+        ctx.lineWidth = this.profile.launchStyle === 'comet' ? 3.2 : 2;
+        ctx.shadowBlur = this.profile.launchStyle === 'rail' ? 12 : 7;
+        ctx.shadowColor = this.cue.primaryColor;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        if (this.profile.launchStyle === 'bubble') {
+          ctx.beginPath();
+          ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+          ctx.strokeStyle = this.cue.secondaryColor;
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(x - 1, y - 1, 2, 2);
+        }
+        if (p >= 1 && !this.done) {
+          this.done = true;
+          burst(this.cue, this.intensity, this.profile);
+        }
+      }
+    }
+
+    class Particle {
+      constructor(x, y, vx, vy, color, profile, life, options) {
+        this.x = this.px = x; this.y = this.py = y;
+        this.vx = vx; this.vy = vy; this.color = color;
+        this.profile = profile; this.life = this.maxLife = life;
+        this.options = options || {};
+        this.phase = this.options.phase || 0;
+        this.rotation = this.options.rotation || 0;
+      }
+      update() {
+        this.px = this.x; this.py = this.y;
+        this.vx *= this.profile.drag;
+        this.vy = this.vy * this.profile.drag + this.profile.gravity;
+        this.vx += Math.sin(this.phase + this.life * .12) * this.profile.drift;
+        this.x += this.vx; this.y += this.vy; this.life--;
+        this.rotation += this.options.spin || 0;
+      }
+      draw() {
+        const alpha = Math.max(0, this.life / this.maxLife);
+        ctx.globalAlpha = alpha;
+        if (this.options.mode === 'bubble') {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.options.size || 3, 0, Math.PI * 2);
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+        } else if (this.options.mode === 'confetti') {
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.rotation);
+          ctx.fillStyle = this.color;
+          ctx.fillRect(-3, -1.5, 6, 3);
+          ctx.restore();
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(this.px, this.py);
+          ctx.lineTo(this.x, this.y);
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = this.options.width || 1.65;
+          if (this.options.glow) {
+            ctx.shadowBlur = this.options.glow;
+            ctx.shadowColor = this.color;
+          }
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function addParticle(cue, profile, angle, speed, color, life, options) {
+      const x = cue.x * width, y = cue.y * height;
+      particles.push(new Particle(
+        x, y, Math.cos(angle) * speed, Math.sin(angle) * speed, color, profile, life, options));
+    }
+
+    const BURST_BUILDERS = {
+      curtain(cue, intensity, profile, random) {
+        const count = 28 + intensity * 7;
+        for (let i = 0; i < count; i++) {
+          const band = i % 7;
+          const angle = Math.PI * (.14 + .72 * i / count);
+          const speed = (1.8 + band * .32 + random() * .65) * cue.scale;
+          addParticle(cue, profile, angle, speed, band % 2 ? cue.primaryColor : cue.secondaryColor,
+            92 + random() * 36, { width: 2.1, glow: 5, phase: band * .8 });
+        }
+      },
+      neon(cue, intensity, profile, random) {
+        const sides = cue.shape === 'diamond' ? 4 : cue.shape === 'cross' ? 8 : 6;
+        const count = (8 + intensity * 3) * sides;
+        for (let i = 0; i < count; i++) {
+          const edge = i % sides;
+          const angle = Math.PI * 2 * edge / sides + (cue.shape === 'diamond' ? Math.PI / 4 : 0);
+          const speed = (2.1 + Math.floor(i / sides) * .17 + random() * .18) * cue.scale;
+          addParticle(cue, profile, angle, speed, i % 3 ? cue.primaryColor : cue.secondaryColor,
+            58 + random() * 24, { width: 2.25, glow: 8 });
+        }
+      },
+      ripple(cue, intensity, profile, random) {
+        const rings = cue.shape === 'bubble' ? 2 : 3;
+        const count = 22 + intensity * 6;
+        for (let ring = 1; ring <= rings; ring++) {
+          for (let i = 0; i < count; i++) {
+            const angle = Math.PI * 2 * i / count;
+            const speed = (1.15 + ring * .72 + random() * .18) * cue.scale;
+            addParticle(cue, profile, angle, speed, ring % 2 ? cue.primaryColor : cue.secondaryColor,
+              88 + random() * 28, { mode: i % 5 === 0 ? 'bubble' : 'trail', size: 2 + ring, width: 1.7 });
+          }
+        }
+      },
+      ember(cue, intensity, profile, random) {
+        const count = 34 + intensity * 9;
+        for (let i = 0; i < count; i++) {
+          const fan = cue.shape === 'fan' || cue.shape === 'comet';
+          const angle = fan
+            ? Math.PI * (1.08 + .84 * i / count)
+            : Math.PI * 2 * i / count;
+          const speed = (1.8 + random() * 3.1) * cue.scale * (i % 4 === 0 ? 1.18 : .82);
+          addParticle(cue, profile, angle, speed, i % 4 ? cue.primaryColor : cue.secondaryColor,
+            78 + random() * 45, { width: i % 5 === 0 ? 2.6 : 1.55, glow: 4 });
+        }
+      },
+      confetti(cue, intensity, profile, random) {
+        const count = 44 + intensity * 10;
+        const colors = profile.accentColors || THEME_PROFILES.Celebration.accentColors;
+        for (let i = 0; i < count; i++) {
+          let angle = Math.PI * 2 * random();
+          if (cue.shape === 'streamer') angle = Math.PI * (.18 + random() * .64);
+          const speed = (1.7 + random() * 4.2) * cue.scale;
+          addParticle(cue, profile, angle, speed, colors[i % colors.length],
+            65 + random() * 45, {
+              mode: i % 3 ? 'confetti' : 'trail', spin: (random() - .5) * .28,
+              rotation: random() * Math.PI, width: 2.2
+            });
+        }
+      }
+    };
+
+    function burst(cue, intensity, profile) {
+      const random = mulberry32(cue.seed || hashText(JSON.stringify(cue)));
+      const builder = BURST_BUILDERS[profile.particleStyle] || BURST_BUILDERS.confetti;
+      builder(cue, intensity, profile, random);
+      for (let i = 0; i < intensity * 4; i++) {
+        const angle = random() * Math.PI * 2;
+        addParticle(cue, profile, angle, random() * 1.7, '#ffffff', 24 + random() * 20,
+          { width: 1.2, glow: 4 });
+      }
+    }
+
+    function fade(color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawStars(now, color) {
+      for (const star of stars) {
+        ctx.globalAlpha = star.a * (.72 + Math.sin(now * .001 + star.x) * .28);
+        ctx.fillStyle = color;
+        ctx.fillRect(star.x, star.y, star.r, star.r);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    const BACKDROP_DRAWERS = {
+      aurora(now) {
+        fade('rgba(2, 8, 20, .2)');
+        drawStars(now, '#dbeafe');
+        const colors = ['rgba(52,211,153,.12)', 'rgba(125,249,255,.12)', 'rgba(139,92,246,.13)'];
+        for (let band = 0; band < colors.length; band++) {
+          ctx.beginPath();
+          ctx.moveTo(-30, height * (.22 + band * .09));
+          for (let x = -30; x <= width + 60; x += 60) {
+            const y = height * (.23 + band * .09) + Math.sin(x * .008 + now * .00028 + band) * 42;
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(width + 30, height * .66);
+          ctx.lineTo(-30, height * .55);
+          ctx.closePath();
+          ctx.fillStyle = colors[band];
+          ctx.fill();
+        }
+        fade('rgba(1, 6, 16, .035)');
+      },
+      'cyber-city'(now) {
+        fade('rgba(2, 2, 15, .3)');
+        const horizon = height * .58;
+        ctx.strokeStyle = 'rgba(0,245,255,.14)';
+        ctx.lineWidth = 1;
+        for (let y = horizon; y < height; y += Math.max(12, (y - horizon) * .16 + 10)) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+        }
+        for (let x = -width; x < width * 2; x += width / 12) {
+          ctx.beginPath(); ctx.moveTo(width / 2, horizon); ctx.lineTo(x, height); ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(3,3,18,.96)';
+        for (let x = 0; x < width; x += 46) {
+          const building = 45 + ((x * 13) % 145);
+          ctx.fillRect(x, horizon - building, 39, building);
+          ctx.fillStyle = (x / 46) % 2 ? 'rgba(255,43,214,.55)' : 'rgba(0,245,255,.5)';
+          for (let wy = horizon - building + 10; wy < horizon - 8; wy += 18) {
+            if ((wy + x) % 3 < 2) ctx.fillRect(x + 7, wy, 4, 2);
+          }
+          ctx.fillStyle = 'rgba(3,3,18,.96)';
+        }
+        ctx.fillStyle = 'rgba(255,43,214,.045)';
+        ctx.fillRect(0, Math.floor((now * .035) % Math.max(1, height)), width, 2);
+      },
+      ocean(now) {
+        fade('rgba(1, 14, 34, .22)');
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, 'rgba(8,47,73,.1)');
+        gradient.addColorStop(1, 'rgba(13,148,136,.16)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        for (let band = 0; band < 5; band++) {
+          ctx.beginPath();
+          for (let x = 0; x <= width; x += 22) {
+            const y = height * (.62 + band * .06) + Math.sin(x * .012 + now * .0006 + band) * (6 + band * 2);
+            x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(45,212,191,${.11 - band * .012})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        for (const item of scenery.slice(0, 18)) {
+          const y = height - ((item.y + now * item.speed * .018) % height);
+          ctx.globalAlpha = .16;
+          ctx.beginPath(); ctx.arc(item.x, y, item.size, 0, Math.PI * 2);
+          ctx.strokeStyle = '#e0f2fe'; ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      },
+      sunset(now) {
+        fade('rgba(18, 6, 24, .2)');
+        const horizon = height * .72;
+        const gradient = ctx.createLinearGradient(0, 0, 0, horizon);
+        gradient.addColorStop(0, 'rgba(67,20,73,.12)');
+        gradient.addColorStop(.58, 'rgba(190,24,93,.12)');
+        gradient.addColorStop(1, 'rgba(249,115,22,.2)');
+        ctx.fillStyle = gradient; ctx.fillRect(0, 0, width, horizon);
+        ctx.beginPath(); ctx.arc(width * .76, horizon, Math.min(width, height) * .095, Math.PI, 0);
+        ctx.fillStyle = 'rgba(251,191,36,.2)'; ctx.fill();
+        ctx.fillStyle = 'rgba(12,7,18,.96)';
+        ctx.beginPath(); ctx.moveTo(0, horizon);
+        for (let x = 0; x <= width; x += 70) {
+          ctx.lineTo(x, horizon - 16 - ((x * 7) % 48));
+        }
+        ctx.lineTo(width, height); ctx.lineTo(0, height); ctx.fill();
+        ctx.fillRect(0, horizon + 3, width, height - horizon);
+      },
+      festival(now) {
+        fade('rgba(15, 4, 34, .22)');
+        drawStars(now, '#fff7d6');
+        const colors = currentProfile.accentColors || THEME_PROFILES.Celebration.accentColors;
+        ctx.globalAlpha = .065;
+        for (let i = 0; i < 5; i++) {
+          ctx.beginPath();
+          ctx.moveTo(width * (i + .5) / 5, height);
+          ctx.lineTo(width * (i + .15) / 5, 0);
+          ctx.lineTo(width * (i + .85) / 5, 0);
+          ctx.closePath();
+          ctx.fillStyle = colors[i % colors.length];
+          ctx.fill();
+        }
+        ctx.globalAlpha = .55;
+        for (let i = 0; i < 16; i++) {
+          const x = i * width / 15;
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + 8, 14); ctx.lineTo(x + 16, 0);
+          ctx.fillStyle = colors[i % colors.length]; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+    };
+
+    function drawBackdrop(now) {
+      (BACKDROP_DRAWERS[currentProfile.backdrop] || BACKDROP_DRAWERS.aurora)(now);
+    }
+
+    function animate(now) {
+      drawBackdrop(now);
+      for (const rocket of rockets) rocket.draw(now);
+      rockets = rockets.filter(rocket => !rocket.done);
+      for (const particle of particles) { particle.update(); particle.draw(); }
+      particles = particles.filter(particle => particle.life > 0);
+      requestAnimationFrame(animate);
+    }
+
+    function createFinaleSeed(show) {
+      const profileValues = [
+        currentProfile.backdrop, currentProfile.launchStyle, currentProfile.particleStyle,
+        currentProfile.finaleStyle, currentProfile.gravity, currentProfile.drag, currentProfile.drift,
+        currentProfile.accentColors
+      ];
+      const cueValues = show.cues.map(cue => [
+        cue.seed, cue.delayMilliseconds, cue.x, cue.y, cue.primaryColor,
+        cue.secondaryColor, cue.shape, cue.scale
+      ]);
+      return hashText(JSON.stringify([
+        show.title, currentTheme, show.intensity, show.finaleMessage, profileValues, cueValues
+      ]));
+    }
+
+    function runFinale(show) {
+      const colors = currentProfile.accentColors || THEME_PROFILES[currentTheme].accentColors;
+      const finaleSeed = createFinaleSeed(show);
+      const patterns = {
+        bloom: [[.25, .34, 'curtain'], [.5, .24, 'wave'], [.75, .34, 'curtain']],
+        glitch: [[.16, .2, 'diamond'], [.33, .3, 'cross'], [.5, .18, 'polygon'], [.67, .3, 'cross'], [.84, .2, 'diamond']],
+        tide: [[.25, .5, 'ripple'], [.5, .42, 'ring'], [.75, .5, 'ripple']],
+        horizon: [[.14, .62, 'fan'], [.32, .48, 'comet'], [.5, .4, 'sunburst'], [.68, .48, 'comet'], [.86, .62, 'fan']],
+        banner: [[.08, .24, 'confetti'], [.23, .34, 'streamer'], [.39, .2, 'pop'], [.55, .3, 'star'], [.71, .2, 'pop'], [.87, .34, 'streamer']]
+      };
+      const pattern = patterns[currentProfile.finaleStyle] || patterns.bloom;
+      pattern.forEach((item, index) => {
+        const cue = {
+          x: item[0], y: item[1], shape: item[2], scale: 1.05 + show.intensity * .05,
+          primaryColor: colors[index % colors.length],
+          secondaryColor: colors[(index + 1) % colors.length],
+          seed: hashText(finaleSeed + ':finale:' + index)
+        };
+        timers.push(setTimeout(() => burst(cue, show.intensity, currentProfile), index * 70));
+      });
+    }
+
+    function startShow(show) {
+      if (!show || !Array.isArray(show.cues)) return;
+      lastShow = show;
+      timers.forEach(clearTimeout);
+      timers = [];
+      rockets = [];
+      particles = [];
+      finale.classList.remove('visible');
+      applyTheme(show);
+      document.getElementById('showTitle').textContent = show.title;
+      document.getElementById('audienceTheme').textContent = String(show.theme).toUpperCase();
+      document.getElementById('audienceCues').textContent = show.cues.length + ' CUES';
+      setStatus('SHOW LIVE', true);
+      applyInputs(show);
+
+      for (const cue of show.cues) {
+        timers.push(setTimeout(
+          () => rockets.push(new Rocket(cue, show.intensity, currentProfile)),
+          cue.delayMilliseconds));
+      }
+      const lastDelay = Math.max(...show.cues.map(cue => cue.delayMilliseconds));
+      timers.push(setTimeout(() => {
+        finale.textContent = show.finaleMessage;
+        finale.classList.add('visible');
+        runFinale(show);
+      }, lastDelay + 650));
+      timers.push(setTimeout(() => finale.classList.remove('visible'), lastDelay + 4300));
+    }
+
+    function applyInputs(show) {
+      if (show.title) document.getElementById('title').value = show.title;
+      if (show.theme) document.getElementById('theme').value = show.theme;
+      if (show.intensity) {
+        document.getElementById('intensity').value = show.intensity;
+        document.getElementById('intensityValue').textContent = show.intensity;
+      }
+      if (show.finaleMessage) document.getElementById('message').value = show.finaleMessage;
+    }
+
+    function setStatus(text, connected) {
+      statusText.textContent = text;
+      status.classList.toggle('connected', !!connected);
+    }
+
+    let nextRequestId = 1;
+    const pendingRequests = new Map();
+    function sendRequest(method, params) {
+      const id = nextRequestId++;
+      return new Promise((resolve, reject) => {
+        pendingRequests.set(id, { resolve, reject });
+        window.parent.postMessage({ jsonrpc: '2.0', id, method, params: params || {} }, '*');
+      });
+    }
+    function sendNotification(method, params) {
+      window.parent.postMessage({ jsonrpc: '2.0', method, params: params || {} }, '*');
+    }
+
+    window.addEventListener('message', event => {
+      const message = event.data;
+      if (!message || message.jsonrpc !== '2.0') return;
+      if (message.id !== undefined && pendingRequests.has(message.id)) {
+        const pending = pendingRequests.get(message.id);
+        pendingRequests.delete(message.id);
+        message.error ? pending.reject(new Error(message.error.message)) : pending.resolve(message.result);
+        return;
+      }
+      if (message.method === 'ui/notifications/tool-input') {
+        applyInputs(message.params.arguments || {});
+      }
+      if (message.method === 'ui/notifications/tool-result') {
+        startShow(message.params.structuredContent);
+      }
+    });
+
+    async function initializeMcpApp() {
+      try {
+        await sendRequest('ui/initialize', {
+          protocolVersion: '2026-01-26',
+          appCapabilities: {},
+          appInfo: { name: 'fireworks-stage', version: '1.0.0' }
+        });
+        sendNotification('ui/notifications/initialized', {});
+        setStatus('MCP APP READY', true);
+      } catch (error) {
+        setStatus('MCP APP ERROR', false);
+      }
+    }
+
+    async function launchFromApp() {
+      const button = document.getElementById('launch');
+      button.disabled = true;
+      setStatus('CHOREOGRAPHING', true);
+      try {
+        const result = await sendRequest('tools/call', {
+          name: 'launch_fireworks',
+          arguments: {
+            title: document.getElementById('title').value,
+            theme: document.getElementById('theme').value,
+            intensity: Number(document.getElementById('intensity').value),
+            finaleMessage: document.getElementById('message').value
+          }
+        });
+        startShow(result.structuredContent);
+      } catch (error) {
+        setStatus('LAUNCH FAILED', false);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function connectSignalR() {
+      try {
+        setStatus('CONNECTING SIGNALR', false);
+        const response = await fetch('/show/negotiate?negotiateVersion=1', { method: 'POST' });
+        if (!response.ok) throw new Error('Negotiate failed');
+        const negotiation = await response.json();
+        if (!negotiation.availableTransports.some(item => item.transport === 'WebSockets')) {
+          throw new Error('WebSockets unavailable');
+        }
+
+        const scheme = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(
+          `${scheme}//${location.host}/show?id=${encodeURIComponent(negotiation.connectionToken)}`);
+        let buffer = '';
+        let pingTimer;
+
+        socket.addEventListener('open', () => {
+          socket.send('{"protocol":"json","version":1}\u001e');
+        });
+        socket.addEventListener('message', event => {
+          buffer += event.data;
+          const frames = buffer.split('\u001e');
+          buffer = frames.pop();
+          for (const frame of frames) {
+            if (!frame) continue;
+            const message = JSON.parse(frame);
+            if (message.type === 1 && message.target === 'ShowLaunched') {
+              startShow(message.arguments[0]);
+            } else if (message.type === undefined) {
+              setStatus('SIGNALR CONNECTED', true);
+              pingTimer = setInterval(() => {
+                if (socket.readyState === WebSocket.OPEN) socket.send('{"type":6}\u001e');
+              }, 10000);
+            }
+          }
+        });
+        socket.addEventListener('close', () => {
+          clearInterval(pingTimer);
+          setStatus('RECONNECTING', false);
+          setTimeout(connectSignalR, 1500);
+        });
+        socket.addEventListener('error', () => socket.close());
+      } catch (error) {
+        setStatus('RECONNECTING', false);
+        setTimeout(connectSignalR, 1500);
+      }
+    }
+
+    document.getElementById('intensity').addEventListener('input', event => {
+      document.getElementById('intensityValue').textContent = event.target.value;
+    });
+    document.getElementById('launch').addEventListener('click', launchFromApp);
+    window.addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(animate);
+    embedded ? initializeMcpApp() : connectSignalR();
+  </script>
+</body>
+</html>

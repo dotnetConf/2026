@@ -1,0 +1,24 @@
+# .NET build output
+**/[Bb]in/
+**/[Oo]bj/
+artifacts/
+[Tt]est[Rr]esults/
+
+# Visual Studio and IDE state
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# NuGet packages and logs
+*.nupkg
+*.snupkg
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
