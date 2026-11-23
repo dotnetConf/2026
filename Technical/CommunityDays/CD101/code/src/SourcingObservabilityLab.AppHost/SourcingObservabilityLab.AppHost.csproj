@@ -1,0 +1,18 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.4">
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Sqlite" Version="13.6.1" />
+    <ProjectReference Include="..\Sourcing.Api\Sourcing.Api.csproj" />
+    <ProjectReference Include="..\Supplier.Api\Supplier.Api.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AspireUseCliBundle>true</AspireUseCliBundle>
+    <UserSecretsId>7a4a2bd1-85c3-4799-8dec-693c77f3b6af</UserSecretsId>
+  </PropertyGroup>
+
+</Project>

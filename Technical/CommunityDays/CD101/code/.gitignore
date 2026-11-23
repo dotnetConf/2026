@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+.vs/
+.aspire/
+**/data/
+**/*.db
+**/*.db-shm
+**/*.db-wal
+TestResults/
+**/appsettings.Local.json

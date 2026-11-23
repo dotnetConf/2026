@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sourcing.Api/Sourcing.Api.csproj" />
+    <Project Path="src/SourcingObservabilityLab.AppHost/SourcingObservabilityLab.AppHost.csproj" />
+    <Project Path="src/SourcingObservabilityLab.ServiceDefaults/SourcingObservabilityLab.ServiceDefaults.csproj" />
+    <Project Path="src/Supplier.Api/Supplier.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SourcingObservabilityLab.Tests/SourcingObservabilityLab.Tests.csproj" />
+  </Folder>
+</Solution>
