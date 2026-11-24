@@ -8,6 +8,8 @@ _This 30-minute .NET Conf presentation is based off of a 6-post blog series on t
 
 ## Related Links
 
+- [Presentation](./dotnet-conf-2026-tiles-and-tokens-sadukie.pdf)
+
 - ▶️ [Tiles & Tokens rules - NimblePros YouTube](https://youtu.be/Ys4RChDxhQw)
 - 💻 [Tiles & Tokens GitHub repo](https://github.com/NimblePros/tiles-and-tokens-net-11)
 
